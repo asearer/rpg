@@ -1,40 +1,7 @@
 import random
-
-class Player:
-    def __init__(self, name):
-        self.name = name
-        self.hp = 100
-        self.attack = 10
-        self.gold = 0
-        self.level = 1
-
-    def is_alive(self):
-        return self.hp > 0
-
-    def attack_enemy(self):
-        return random.randint(1, self.attack)
-
-    def take_damage(self, damage):
-        self.hp -= damage
-
-    def heal(self):
-        self.hp += 20
-
-class Enemy:
-    def __init__(self, name, hp, attack, gold_reward):
-        self.name = name
-        self.hp = hp
-        self.attack = attack
-        self.gold_reward = gold_reward
-
-    def is_alive(self):
-        return self.hp > 0
-
-    def attack_player(self):
-        return random.randint(1, self.attack)
-
-    def take_damage(self, damage):
-        self.hp -= damage
+from characters import Player, Enemy
+from shop import Shop, Item
+from quests import Quest, QuestManager
 
 def battle(player, enemy):
     print(f"A wild {enemy.name} appears!")
@@ -62,10 +29,23 @@ def battle(player, enemy):
     else:
         print(f"{player.name} was defeated by {enemy.name}... Game Over!")
 
+
 def main():
     print("Welcome to The Game!")
     player_name = input("Enter your name: ")
     player = Player(player_name)
+    shop = Shop()
+    quest_manager = QuestManager()
+
+    # Initialize quests
+    quest1 = Quest("Defeat the Goblin", "Defeat the Goblin terrorizing the village.", 50)
+    quest2 = Quest("Retrieve the Artifact", "Retrieve the ancient artifact hidden in the cave.", 100)
+    quest_manager.add_quest(quest1)
+    quest_manager.add_quest(quest2)
+
+    # Initialize shop items
+    shop.add_item(Item("Health Potion", "Restores 20 HP", 10))
+    shop.add_item(Item("Sword", "Deals extra damage", 50))
 
     while player.is_alive():
         enemy = Enemy("Goblin", 30, 8, 20)
@@ -73,6 +53,15 @@ def main():
         if player.is_alive():
             player.level += 1
             print(f"{player.name} leveled up to level {player.level}!")
+            shop.display_items()
+            choice = input("Enter the index of the item you want to buy (or 'q' to quit): ")
+            if choice.lower() == 'q':
+                break
+            try:
+                item_index = int(choice) - 1
+                shop.buy_item(item_index, player)
+            except ValueError:
+                print("Invalid input.")
 
     print("Thanks for playing!")
 
