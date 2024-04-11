@@ -12,8 +12,9 @@ def print_separator():
 
 def display_player_status(player):
     """Display player's status."""
-    print(f"Player: {player.name} | Level: {player.level} | HP: {player.hp} | Gold: {player.gold}")
+    print(f"Player: {player.name} | Level: {player.level} | HP: {player.hp}/{player.max_hp} | Gold: {player.gold}")
 
 def display_enemy_status(enemy):
     """Display enemy's status."""
-    print(f"Enemy: {enemy.name} | HP: {enemy.hp}")
+    print(f"Enemy: {enemy.name} | HP: {enemy.hp}/{enemy.max_hp} | Attack: {enemy.attack}")
+

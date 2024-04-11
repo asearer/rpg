@@ -2,13 +2,17 @@ import random
 from characters import Player, Enemy
 from shop import Shop, Item
 from quests import Quest, QuestManager
+from utils import generate_random_name, print_separator, display_player_status, display_enemy_status
 
 def battle(player, enemy):
+    """Simulate a battle between player and enemy."""
     print(f"A wild {enemy.name} appears!")
 
     while player.is_alive() and enemy.is_alive():
-        print(f"{player.name}'s HP: {player.hp}")
-        print(f"{enemy.name}'s HP: {enemy.hp}")
+        print_separator()
+        display_player_status(player)
+        display_enemy_status(enemy)
+        print_separator()
 
         player_attack = player.attack_enemy()
         enemy_attack = enemy.attack_player()
@@ -22,15 +26,14 @@ def battle(player, enemy):
 
     if player.is_alive():
         print(f"{player.name} defeated {enemy.name}!")
-        player.gold += enemy.gold_reward
-        print(f"{player.name} received {enemy.gold_reward} gold.")
+        player.receive_gold(enemy.gold_reward)
         player.heal()
         print(f"{player.name} healed 20 HP.")
     else:
         print(f"{player.name} was defeated by {enemy.name}... Game Over!")
 
-
 def main():
+    """Main function to run the game."""
     print("Welcome to The Game!")
     player_name = input("Enter your name: ")
     player = Player(player_name)
@@ -48,11 +51,15 @@ def main():
     shop.add_item(Item("Sword", "Deals extra damage", 50))
 
     while player.is_alive():
-        enemy = Enemy("Goblin", 30, 8, 20)
+        enemy = Enemy(generate_random_name(), random.randint(20, 50), random.randint(5, 15), random.randint(10, 30))
         battle(player, enemy)
         if player.is_alive():
             player.level += 1
             print(f"{player.name} leveled up to level {player.level}!")
+            quest_manager.complete_quest("Defeat the Goblin")  # Mark quest as completed
+            if quest_manager.quests_completed() == 2:
+                print("Congratulations! You completed all quests.")
+                break
             shop.display_items()
             choice = input("Enter the index of the item you want to buy (or 'q' to quit): ")
             if choice.lower() == 'q':
@@ -67,3 +74,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
